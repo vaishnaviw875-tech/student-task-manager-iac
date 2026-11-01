@@ -29,7 +29,7 @@ variable "environment" {
 variable "app_title" {
   description = "Title shown in the web application."
   type        = string
-  default     = "Student Task Manager"
+  default     = "Cloud-Based Student Task Manager"
 }
 
 variable "workers_subdomain" {
