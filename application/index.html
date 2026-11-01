@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{APP_TITLE}}</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header>
+    <h1>{{APP_TITLE}}</h1>
+    <span class="badge" id="envBadge">{{ENVIRONMENT}}</span>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Add Task</h2>
+      <div class="form-row">
+        <input id="title" type="text" placeholder="Task title (e.g. Submit Cloud Computing Assignment)" maxlength="200" />
+        <select id="priority">
+          <option>High</option>
+          <option selected>Medium</option>
+          <option>Low</option>
+        </select>
+        <select id="status">
+          <option selected>Pending</option>
+          <option>In Progress</option>
+          <option>Completed</option>
+        </select>
+        <button id="addBtn">Add Task</button>
+      </div>
+      <p id="message" class="message" role="status"></p>
+    </section>
+
+    <section class="card">
+      <div class="toolbar">
+        <h2>Tasks</h2>
+        <input id="search" type="search" placeholder="Search..." />
+        <select id="filter">
+          <option value="">All statuses</option>
+          <option>Pending</option>
+          <option>In Progress</option>
+          <option>Completed</option>
+        </select>
+      </div>
+      <div class="stats" id="stats"></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>ID</th><th>Task</th><th>Priority</th><th>Status</th><th>Created</th><th></th></tr>
+          </thead>
+          <tbody id="taskBody"></tbody>
+        </table>
+      </div>
+      <p id="empty" class="empty" hidden>No tasks yet. Add your first task above.</p>
+    </section>
+  </main>
+
+  <script src="/script.js"></script>
+</body>
+</html>
