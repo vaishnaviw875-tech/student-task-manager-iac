@@ -1,0 +1,67 @@
+name: Terraform Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Never run two deployments at once (protects the Terraform state)
+concurrency:
+  group: terraform-deploy
+  cancel-in-progress: false
+
+env:
+  # Cloudflare credentials (GitHub Secrets)
+  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  TF_VAR_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+  # Optional: only used to print the app URL
+  TF_VAR_workers_subdomain: ${{ vars.WORKERS_SUBDOMAIN }}
+  # Remote state in HCP Terraform (GitHub runners are temporary, so state must live elsewhere)
+  TF_CLOUD_ORGANIZATION: ${{ vars.TF_CLOUD_ORGANIZATION }}
+  TF_WORKSPACE: ${{ vars.TF_WORKSPACE }}
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+      - name: Enable remote state backend
+        run: cp backend.tf.example backend.tf
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        run: terraform init -input=false
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan -input=false
+
+      # Deploy only on a push to main (not on pull requests)
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: terraform apply -input=false -auto-approve
+
+      - name: Show outputs
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: terraform output
