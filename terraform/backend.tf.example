@@ -1,0 +1,7 @@
+# Remote state for GitHub Actions (HCP Terraform, free tier).
+# The workflow copies this file to backend.tf automatically.
+# Organization and workspace come from the environment variables
+# TF_CLOUD_ORGANIZATION and TF_WORKSPACE, so nothing is hard-coded.
+terraform {
+  cloud {}
+}
